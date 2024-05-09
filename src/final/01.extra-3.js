@@ -2,25 +2,30 @@
 // 💯 simulate setState with an object OR function
 // http://localhost:3000/isolated/final/01.extra-3.js
 
-import * as React from 'react'
+import {useReducer} from 'react'
 
-const countReducer = (state, action) => ({
-  ...state,
-  ...(typeof action === 'function' ? action(state) : action),
-})
-
-function Counter({initialCount = 0, step = 1}) {
-  const [state, setState] = React.useReducer(countReducer, {
-    count: initialCount,
-  })
-  const {count} = state
-  const increment = () =>
-    setState(currentState => ({count: currentState.count + step}))
-  return <button onClick={increment}>{count}</button>
+function reducer(state, action) {
+  if (action.type === 'incremented_age') {
+    return {
+      age: state.age + 1,
+    }
+  }
+  throw Error('Unknown action.')
 }
 
-function App() {
-  return <Counter />
-}
+export default function Counter() {
+  const [state, dispatch] = useReducer(reducer, {age: 42})
 
-export default App
+  return (
+    <>
+      <button
+        onClick={() => {
+          dispatch({type: 'incremented_age'})
+        }}
+      >
+        Increment age
+      </button>
+      <p>Hello! You are {state.age}.</p>
+    </>
+  )
+}
